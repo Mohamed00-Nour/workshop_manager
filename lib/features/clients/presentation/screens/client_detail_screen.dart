@@ -274,13 +274,26 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
         BlocProvider.value(value: _jobsBloc),
         BlocProvider.value(value: _paymentsBloc),
       ],
-      child: Scaffold(
-        appBar: widget.isTabletOrDesktopLayout
-            ? null
-            : AppBar(
-                title: Text(widget.client.name),
-              ),
-        body: Column(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF131321), Color(0xFF1F1F35), Color(0xFF131321)],
+                )
+              : null,
+        ),
+        child: Scaffold(
+          backgroundColor: Colors.transparent,
+          appBar: widget.isTabletOrDesktopLayout
+              ? null
+              : AppBar(
+                  title: Text(widget.client.name),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                ),
+          body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -482,6 +495,6 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
           ),
         ),
       ),
-    );
+    ),);
   }
 }

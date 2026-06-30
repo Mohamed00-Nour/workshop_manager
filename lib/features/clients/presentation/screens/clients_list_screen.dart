@@ -364,11 +364,24 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
       ),
     );
 
-    return Scaffold(
-      body: ResponsiveLayout(
-        mobile: Scaffold(
-          drawer: sidebar,
-          body: clientListContent,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF131321), Color(0xFF1F1F35), Color(0xFF131321)],
+              )
+            : null,
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        drawer: ResponsiveLayout.isMobile(context) ? sidebar : null,
+        body: ResponsiveLayout(
+          mobile: Scaffold(
+            backgroundColor: Colors.transparent,
+            drawer: sidebar,
+            body: clientListContent,
           floatingActionButton: FloatingActionButton(
             onPressed: () => _showAddEditClientDialog(),
             child: const Icon(Icons.add),
@@ -385,6 +398,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                   _selectedClient == null
                       ? Center(child: Text(context.translate('no_data')))
                       : Scaffold(
+                        backgroundColor: Colors.transparent,
                         body: ClientDetailScreen(
                           client: _selectedClient!,
                           isTabletOrDesktopLayout: true,
@@ -405,6 +419,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                   _selectedClient == null
                       ? Center(child: Text(context.translate('no_data')))
                       : Scaffold(
+                        backgroundColor: Colors.transparent,
                         body: ClientDetailScreen(
                           client: _selectedClient!,
                           isTabletOrDesktopLayout: true,
@@ -422,6 +437,6 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 onPressed: () => _showAddEditClientDialog(),
                 child: const Icon(Icons.add),
               ),
-    );
+    ),);
   }
 }
