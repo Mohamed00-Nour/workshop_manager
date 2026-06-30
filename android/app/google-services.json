@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "241002232748",
+    "project_id": "workshop-manager-5f2f7",
+    "storage_bucket": "workshop-manager-5f2f7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241002232748:android:b4598e8a03af0968e4d809",
+        "android_client_info": {
+          "package_name": "com.example.workshop_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAzaKUDe7c-QLp9rHXbkMzmKFznVP3U7Rw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
