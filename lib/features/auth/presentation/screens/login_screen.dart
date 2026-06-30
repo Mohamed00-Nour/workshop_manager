@@ -26,6 +26,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLogin = true;
 
   @override
   void dispose() {
@@ -36,12 +37,21 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _submit() {
     if (_formKey.currentState!.validate()) {
-      context.read<AuthBloc>().add(
-            LoginRequested(
-              email: _emailController.text.trim(),
-              password: _passwordController.text,
-            ),
-          );
+      if (_isLogin) {
+        context.read<AuthBloc>().add(
+              LoginRequested(
+                email: _emailController.text.trim(),
+                password: _passwordController.text,
+              ),
+            );
+      } else {
+        context.read<AuthBloc>().add(
+              RegisterRequested(
+                email: _emailController.text.trim(),
+                password: _passwordController.text,
+              ),
+            );
+      }
     }
   }
 
@@ -63,7 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            context.translate('welcome_back'),
+            _isLogin ? context.translate('welcome_back') : context.translate('register'),
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   fontSize: 24,
@@ -72,11 +82,11 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            context.translate('please_login'),
+            _isLogin ? context.translate('please_login') : "",
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          const SizedBox(height: 32),
+          SizedBox(height: _isLogin ? 32 : 16),
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
@@ -124,9 +134,22 @@ class _LoginScreenState extends State<LoginScreen> {
               }
               return ElevatedButton(
                 onPressed: _submit,
-                child: Text(context.translate('login')),
+                child: Text(_isLogin ? context.translate('login') : context.translate('register')),
               );
             },
+          ),
+          const SizedBox(height: 16),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _isLogin = !_isLogin;
+              });
+            },
+            child: Text(
+              _isLogin
+                  ? context.translate('dont_have_account')
+                  : context.translate('already_have_account'),
+            ),
           ),
         ],
       ),

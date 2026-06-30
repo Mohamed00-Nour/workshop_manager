@@ -1,6 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image/image.dart' as img;
 import 'package:hive/hive.dart';
 import '../../../../core/services/cache_service.dart';
@@ -9,7 +9,6 @@ import '../../domain/models/job_model.dart';
 
 class JobRepository {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseStorage _storage = FirebaseStorage.instance;
   final CacheService _cacheService = CacheService();
   final ClientRepository _clientRepository = ClientRepository();
 
@@ -80,10 +79,9 @@ class JobRepository {
 
     if (imageFile != null) {
       final compressedFile = await compressImage(imageFile);
-      final ref = _storage.ref().child('job_images/${job.clientId}/${docRef.id}.jpg');
-      
-      final uploadTask = await ref.putFile(compressedFile);
-      imageUrl = await uploadTask.ref.getDownloadURL();
+      final bytes = await compressedFile.readAsBytes();
+      final base64String = base64Encode(bytes);
+      imageUrl = 'data:image/jpeg;base64,$base64String';
     }
 
     final jobData = job.toMap();

@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -93,6 +94,34 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
         const SnackBar(content: Text('Please wait until jobs and payments load completely.')),
       );
     }
+  }
+
+  Widget _buildJobImage(String url, {double? width, double? height, BoxFit fit = BoxFit.cover}) {
+    if (url.isEmpty) {
+      return const CircleAvatar(child: Icon(Icons.build));
+    }
+    if (url.startsWith('data:image/') || !url.startsWith('http')) {
+      try {
+        final base64String = url.contains(',') ? url.split(',').last : url;
+        final bytes = base64Decode(base64String);
+        return Image.memory(
+          bytes,
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+        );
+      } catch (e) {
+        return const Icon(Icons.broken_image);
+      }
+    }
+    return Image.network(
+      url,
+      width: width,
+      height: height,
+      fit: fit,
+      errorBuilder: (context, error, stackTrace) => const Icon(Icons.broken_image),
+    );
   }
 
   @override
@@ -217,17 +246,16 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                             final job = jobs[index];
                             return Card(
                               child: ExpansionTile(
-                                leading: job.imageUrl.isNotEmpty
-                                    ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(8),
-                                        child: Image.network(
-                                          job.imageUrl,
-                                          width: 50,
-                                          height: 50,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      )
-                                    : const CircleAvatar(child: Icon(Icons.build)),
+                                leading: SizedBox(
+                                  width: 50,
+                                  height: 50,
+                                  child: _buildJobImage(
+                                    job.imageUrl,
+                                    width: 50,
+                                    height: 50,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
                                 title: Text(job.description, style: const TextStyle(fontWeight: FontWeight.bold)),
                                 subtitle: Text(
                                     '${context.translate('cost')}: ${job.cost} EGP | ${context.translate('status')}: ${context.translate('job_status_${job.status}')}'),
@@ -242,7 +270,7 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                                             padding: const EdgeInsets.only(bottom: 12.0),
                                             child: ClipRRect(
                                               borderRadius: BorderRadius.circular(8),
-                                              child: Image.network(
+                                              child: _buildJobImage(
                                                 job.imageUrl,
                                                 width: double.infinity,
                                                 height: 200,

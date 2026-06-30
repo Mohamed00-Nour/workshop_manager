@@ -70,5 +70,9 @@
   "no_jobs": "لا توجد مهام مسجلة لهذا العميل",
   "no_payments": "لا توجد مدفوعات مسجلة لهذا العميل",
   "confirm_delete": "هل أنت متأكد من الحذف؟",
-  "warning_unsaved_changes": "لديك تغييرات غير محفوظة"
+  "warning_unsaved_changes": "لديك تغييرات غير محفوظة",
+  "register": "إنشاء حساب",
+  "sign_up": "تسجيل جديد",
+  "already_have_account": "لديك حساب بالفعل؟ تسجيل الدخول",
+  "dont_have_account": "ليس لديك حساب؟ تسجيل جديد"
 }

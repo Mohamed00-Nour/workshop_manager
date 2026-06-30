@@ -106,6 +106,17 @@ class AuthRepository {
     return null;
   }
 
+  Future<UserModel?> register(String email, String password) async {
+    final UserCredential cred = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+    if (cred.user != null) {
+      return await _fetchUserFromServer(cred.user!.uid, email);
+    }
+    return null;
+  }
+
   Future<void> logout() async {
     await _firebaseAuth.signOut();
     await _clearCache();
