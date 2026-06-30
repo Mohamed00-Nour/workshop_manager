@@ -112,6 +112,9 @@ class AppTheme {
         bodyLarge: TextStyle(color: lightTextPrimary, fontSize: 15),
         bodyMedium: TextStyle(color: lightTextSecondary, fontSize: 14),
       ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: Color(0xFF0D9488),
+      ),
     );
   }
 
@@ -202,6 +205,9 @@ class AppTheme {
         titleMedium: TextStyle(color: darkTextPrimary, fontWeight: FontWeight.w600, fontSize: 16),
         bodyLarge: TextStyle(color: darkTextPrimary, fontSize: 15),
         bodyMedium: TextStyle(color: darkTextSecondary, fontSize: 14),
+      ),
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: darkPrimary,
       ),
     );
   }

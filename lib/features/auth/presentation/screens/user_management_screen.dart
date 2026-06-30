@@ -182,55 +182,106 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(context.translate('users')),
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+    final Color accent = isDark ? const Color(0xFF46F0D2) : const Color(0xFF0D9488);
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: isDark
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFF131321), Color(0xFF1F1F35), Color(0xFF131321)],
+              )
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFF7F7FA), Color(0xFFFFFFFF), Color(0xFFF7F7FA)],
+              ),
       ),
-      body: FutureBuilder<List<UserModel>>(
-        future: _usersFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          if (snapshot.hasError) {
-            return Center(child: Text(snapshot.error.toString()));
-          }
-          final users = snapshot.data ?? [];
-          if (users.isEmpty) {
-            return Center(child: Text(context.translate('no_data')));
-          }
-
-          return ListView.builder(
-            padding: const EdgeInsets.all(16),
-            itemCount: users.length,
-            itemBuilder: (context, index) {
-              final user = users[index];
-              final isAdmin = user.role == 'admin';
-
-              return Card(
-                child: ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: isAdmin ? Colors.amber : Colors.blueGrey,
-                    foregroundColor: Colors.white,
-                    child: Icon(isAdmin ? Icons.admin_panel_settings : Icons.engineering),
-                  ),
-                  title: Text(user.name),
-                  subtitle: Text('${user.email} (${context.translate(user.role)})'),
-                  trailing: isAdmin
-                      ? null
-                      : IconButton(
-                          icon: const Icon(Icons.delete_outline, color: Colors.red),
-                          onPressed: () => _deleteUser(user.uid),
-                        ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text(
+            context.translate('users'),
+            style: TextStyle(
+              color: isDark ? Colors.white : const Color(0xFF131321),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          iconTheme: IconThemeData(
+            color: isDark ? Colors.white : const Color(0xFF131321),
+          ),
+        ),
+        body: FutureBuilder<List<UserModel>>(
+          future: _usersFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator(color: accent));
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text(snapshot.error.toString()));
+            }
+            final users = snapshot.data ?? [];
+            if (users.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.people_outline, size: 64, color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70)),
+                    const SizedBox(height: 12),
+                    Text(context.translate('no_data'), style: TextStyle(color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70))),
+                  ],
                 ),
               );
-            },
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showAddDialog,
-        child: const Icon(Icons.add),
+            }
+
+            return ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: users.length,
+              itemBuilder: (context, index) {
+                final user = users[index];
+                final isAdmin = user.role == 'admin';
+
+                return Card(
+                  color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                  ),
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    leading: CircleAvatar(
+                      backgroundColor: isAdmin ? Colors.amber.withAlpha(30) : accent.withAlpha(30),
+                      foregroundColor: isAdmin ? Colors.amber : accent,
+                      child: Icon(isAdmin ? Icons.admin_panel_settings : Icons.engineering),
+                    ),
+                    title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: Text(
+                      '${user.email} (${context.translate(user.role)})',
+                      style: TextStyle(color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70)),
+                    ),
+                    trailing: isAdmin
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.delete_outline, color: Colors.red),
+                            onPressed: () => _deleteUser(user.uid),
+                          ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _showAddDialog,
+          backgroundColor: accent,
+          foregroundColor: isDark ? const Color(0xFF131321) : Colors.white,
+          child: const Icon(Icons.add),
+        ),
       ),
     );
   }

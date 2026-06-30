@@ -100,4 +100,18 @@ class CacheService {
     await _jobsBox.clear();
     await _paymentsBox.clear();
   }
+
+  // --- Saved Credentials ---
+  String? getSavedEmail() => _settingsBox.get('saved_email');
+  String? getSavedPassword() => _settingsBox.get('saved_password');
+
+  Future<void> saveCredentials(String email, String password) async {
+    await _settingsBox.put('saved_email', email);
+    await _settingsBox.put('saved_password', password);
+  }
+
+  Future<void> clearCredentials() async {
+    await _settingsBox.delete('saved_email');
+    await _settingsBox.delete('saved_password');
+  }
 }

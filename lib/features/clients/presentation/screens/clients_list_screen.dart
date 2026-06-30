@@ -77,122 +77,122 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final isAdmin = widget.currentUser.role == 'admin';
 
+    final Color accent = isDark ? const Color(0xFF46F0D2) : const Color(0xFF0D9488);
+    final Color dividerColor = isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0);
+
     // Sidebar navigation widget for tablet/desktop
-    Widget sidebar = Drawer(
-      elevation: 0,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+    Widget customSidebar = Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        border: Border(
+          right: BorderSide(color: dividerColor),
+        ),
+      ),
       child: Column(
         children: [
-          DrawerHeader(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.surface,
-              border: Border(
-                bottom: BorderSide(
-                  color: Theme.of(context).dividerColor.withAlpha(50),
-                ),
-              ),
-            ),
-            child: Row(
+          _sidebarHeader(user: widget.currentUser, isDark: isDark),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
               children: [
-                const CircleAvatar(child: Icon(Icons.engineering)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.currentUser.name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      Text(
-                        context.translate(widget.currentUser.role),
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                _sidebarItem(
+                  icon: Icons.people_outline,
+                  label: context.translate('clients'),
+                  selected: _currentNavigationIndex == 0,
+                  onTap: () {
+                    setState(() {
+                      _currentNavigationIndex = 0;
+                    });
+                    if (ResponsiveLayout.isMobile(context)) {
+                      Navigator.pop(context);
+                    }
+                  },
+                  isDark: isDark,
+                  accent: accent,
+                ),
+                if (isAdmin) ...[
+                  _sidebarItem(
+                    icon: Icons.badge_outlined,
+                    label: context.translate('employees'),
+                    selected: _currentNavigationIndex == 1,
+                    onTap: () {
+                      setState(() {
+                        _currentNavigationIndex = 1;
+                      });
+                      if (ResponsiveLayout.isMobile(context)) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    isDark: isDark,
+                    accent: accent,
                   ),
+                  _sidebarItem(
+                    icon: Icons.admin_panel_settings_outlined,
+                    label: context.translate('users'),
+                    selected: _currentNavigationIndex == 2,
+                    onTap: () {
+                      setState(() {
+                        _currentNavigationIndex = 2;
+                      });
+                      if (ResponsiveLayout.isMobile(context)) {
+                        Navigator.pop(context);
+                      }
+                    },
+                    isDark: isDark,
+                    accent: accent,
+                  ),
+                ],
+                const SizedBox(height: 16),
+                Divider(
+                  color: dividerColor,
+                  indent: 16,
+                  endIndent: 16,
+                ),
+                const SizedBox(height: 8),
+                _sidebarItem(
+                  icon: isDark ? Icons.light_mode : Icons.dark_mode,
+                  label: isDark ? context.translate('theme_light') : context.translate('theme_dark'),
+                  selected: false,
+                  onTap: () {
+                    widget.onThemeChanged(isDark ? ThemeMode.light : ThemeMode.dark);
+                  },
+                  isDark: isDark,
+                  accent: accent,
+                ),
+                _sidebarItem(
+                  icon: Icons.translate,
+                  label: context.translate('language'),
+                  selected: false,
+                  onTap: () {
+                    final newLocale = Localizations.localeOf(context).languageCode == 'ar'
+                        ? const Locale('en')
+                        : const Locale('ar');
+                    widget.onLanguageChanged(newLocale);
+                  },
+                  isDark: isDark,
+                  accent: accent,
                 ),
               ],
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.people_outline),
-            title: Text(context.translate('clients')),
-            selected: _currentNavigationIndex == 0,
-            onTap: () {
-              setState(() {
-                _currentNavigationIndex = 0;
-              });
-              if (ResponsiveLayout.isMobile(context)) {
-                Navigator.pop(context);
-              }
-            },
-          ),
-          if (isAdmin) ...[
-            ListTile(
-              leading: const Icon(Icons.badge_outlined),
-              title: Text(context.translate('employees')),
-              selected: _currentNavigationIndex == 1,
-              onTap: () {
-                setState(() {
-                  _currentNavigationIndex = 1;
-                });
-                if (ResponsiveLayout.isMobile(context)) {
-                  Navigator.pop(context);
-                }
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.admin_panel_settings_outlined),
-              title: Text(context.translate('users')),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => UserManagementScreen(
-                          authRepository: widget.authRepository,
-                        ),
-                  ),
-                );
-              },
-            ),
-          ],
-          const Spacer(),
-          ListTile(
-            leading: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-            title: Text(
-              isDark
-                  ? context.translate('theme_light')
-                  : context.translate('theme_dark'),
-            ),
-            onTap: () {
-              widget.onThemeChanged(isDark ? ThemeMode.light : ThemeMode.dark);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.translate),
-            title: Text(context.translate('language')),
-            onTap: () {
-              final newLocale =
-                  Localizations.localeOf(context).languageCode == 'ar'
-                      ? const Locale('en')
-                      : const Locale('ar');
-              widget.onLanguageChanged(newLocale);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: Text(
-              context.translate('logout'),
-              style: const TextStyle(color: Colors.red),
-            ),
-            onTap: () {
+          _footerProfile(
+            user: widget.currentUser,
+            isDark: isDark,
+            accent: accent,
+            onLogout: () {
               context.read<AuthBloc>().add(LogoutRequested());
             },
           ),
         ],
       ),
+    );
+
+    Widget sidebar = Drawer(
+      elevation: 0,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
+      child: customSidebar,
     );
 
     // List of clients with search bar
@@ -431,7 +431,9 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             drawer: sidebar,
             body: _currentNavigationIndex == 0
                 ? clientListContent
-                : const EmployeesDashboardScreen(),
+                : _currentNavigationIndex == 1
+                    ? const EmployeesDashboardScreen()
+                    : UserManagementScreen(authRepository: widget.authRepository),
             floatingActionButton: _currentNavigationIndex == 0
                 ? FloatingActionButton(
                     onPressed: () => _showAddEditClientDialog(),
@@ -439,66 +441,66 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                   )
                 : null,
           ),
-          tablet: _currentNavigationIndex == 0
-              ? Row(
-                  children: [
-                    SizedBox(width: 250, child: sidebar),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    SizedBox(width: 320, child: clientListContent),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    Expanded(
-                      child: _selectedClient == null
-                          ? Center(child: Text(context.translate('no_data')))
-                          : Scaffold(
-                              backgroundColor: Colors.transparent,
-                              body: ClientDetailScreen(
-                                client: _selectedClient!,
-                                isTabletOrDesktopLayout: true,
-                              ),
-                              key: ValueKey(_selectedClient!.id),
-                            ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    SizedBox(width: 250, child: sidebar),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    const Expanded(
-                      child: EmployeesDashboardScreen(),
-                    ),
-                  ],
-                ),
-          desktop: _currentNavigationIndex == 0
-              ? Row(
-                  children: [
-                    SizedBox(width: 280, child: sidebar),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    SizedBox(width: 380, child: clientListContent),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    Expanded(
-                      child: _selectedClient == null
-                          ? Center(child: Text(context.translate('no_data')))
-                          : Scaffold(
-                              backgroundColor: Colors.transparent,
-                              body: ClientDetailScreen(
-                                client: _selectedClient!,
-                                isTabletOrDesktopLayout: true,
-                              ),
-                              key: ValueKey(_selectedClient!.id),
-                            ),
-                    ),
-                  ],
-                )
-              : Row(
-                  children: [
-                    SizedBox(width: 280, child: sidebar),
-                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-                    const Expanded(
-                      child: EmployeesDashboardScreen(),
-                    ),
-                  ],
-                ),
+          tablet: Row(
+            children: [
+              SizedBox(width: 250, child: customSidebar),
+              VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+              Expanded(
+                child: _currentNavigationIndex == 0
+                    ? Row(
+                        children: [
+                          SizedBox(width: 320, child: clientListContent),
+                          VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                          Expanded(
+                            child: _selectedClient == null
+                                ? Center(child: Text(context.translate('no_data')))
+                                : Scaffold(
+                                    backgroundColor: Colors.transparent,
+                                    body: ClientDetailScreen(
+                                      client: _selectedClient!,
+                                      isTabletOrDesktopLayout: true,
+                                    ),
+                                    key: ValueKey(_selectedClient!.id),
+                                  ),
+                          ),
+                        ],
+                      )
+                    : _currentNavigationIndex == 1
+                        ? const EmployeesDashboardScreen()
+                        : UserManagementScreen(authRepository: widget.authRepository),
+              ),
+            ],
+          ),
+          desktop: Row(
+            children: [
+              SizedBox(width: 280, child: customSidebar),
+              VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+              Expanded(
+                child: _currentNavigationIndex == 0
+                    ? Row(
+                        children: [
+                          SizedBox(width: 380, child: clientListContent),
+                          VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                          Expanded(
+                            child: _selectedClient == null
+                                ? Center(child: Text(context.translate('no_data')))
+                                : Scaffold(
+                                    backgroundColor: Colors.transparent,
+                                    body: ClientDetailScreen(
+                                      client: _selectedClient!,
+                                      isTabletOrDesktopLayout: true,
+                                    ),
+                                    key: ValueKey(_selectedClient!.id),
+                                  ),
+                          ),
+                        ],
+                      )
+                    : _currentNavigationIndex == 1
+                        ? const EmployeesDashboardScreen()
+                        : UserManagementScreen(authRepository: widget.authRepository),
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: isAdmin && ResponsiveLayout.isMobile(context)
             ? Container(
@@ -529,6 +531,10 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                       icon: const Icon(Icons.badge_outlined),
                       label: context.translate('employees'),
                     ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.admin_panel_settings_outlined),
+                      label: context.translate('users'),
+                    ),
                   ],
                 ),
               )
@@ -539,6 +545,173 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 onPressed: () => _showAddEditClientDialog(),
                 child: const Icon(Icons.add),
               ),
+      ),
+    );
+  }
+
+  Widget _sidebarHeader({required UserModel user, required bool isDark}) {
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Container(
+          width: 60,
+          height: 60,
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF6366F1), Color(0xFF4F46E5)],
+            ),
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFF6366F1).withAlpha(100),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: const Icon(
+            Icons.auto_awesome,
+            color: Colors.white,
+            size: 28,
+          ),
+        ),
+        const SizedBox(height: 12),
+        Text(
+          'Mr. ${user.name.split(' ')[0]} Dashboard',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: isDark ? Colors.white : const Color(0xFF131321),
+          ),
+        ),
+        const SizedBox(height: 18),
+        Divider(
+          color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0),
+          indent: 16,
+          endIndent: 16,
+          height: 1,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  Widget _sidebarItem({
+    required IconData icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+    required bool isDark,
+    required Color accent,
+  }) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 3),
+      decoration: BoxDecoration(
+        color: selected
+            ? (isDark ? const Color(0xFF1E203C) : accent.withAlpha(20))
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: selected
+              ? (isDark ? accent.withAlpha(80) : accent.withAlpha(100))
+              : Colors.transparent,
+          width: 1,
+        ),
+      ),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+        dense: true,
+        leading: Icon(
+          icon,
+          color: selected
+              ? (isDark ? Colors.white : accent)
+              : (isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70)),
+          size: 20,
+        ),
+        title: Text(
+          label,
+          style: TextStyle(
+            fontWeight: selected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 13,
+            color: selected
+                ? (isDark ? Colors.white : accent)
+                : (isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70)),
+          ),
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  Widget _footerProfile({
+    required UserModel user,
+    required bool isDark,
+    required Color accent,
+    required VoidCallback onLogout,
+  }) {
+    final initials = user.name
+        .trim()
+        .split(' ')
+        .take(2)
+        .map((w) => w.isNotEmpty ? w[0].toUpperCase() : '')
+        .join();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: isDark ? const Color(0xFF3B82F6) : accent.withAlpha(40),
+            child: Text(
+              initials,
+              style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white, fontSize: 13),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  user.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13,
+                    color: isDark ? Colors.white : const Color(0xFF131321),
+                  ),
+                ),
+                Text(
+                  user.role.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 9,
+                    fontWeight: FontWeight.bold,
+                    color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.logout, color: Colors.red, size: 18),
+            onPressed: onLogout,
+            tooltip: 'Logout',
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
       ),
     );
   }

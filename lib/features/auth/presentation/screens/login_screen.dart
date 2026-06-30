@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/utils/responsive_layout.dart';
+import '../../../../core/services/cache_service.dart';
 import '../bloc/auth_bloc.dart';
 import '../bloc/auth_event.dart';
 import '../bloc/auth_state.dart';
@@ -27,6 +28,14 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _isLogin = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final cache = CacheService();
+    _emailController.text = cache.getSavedEmail() ?? '';
+    _passwordController.text = cache.getSavedPassword() ?? '';
+  }
 
   @override
   void dispose() {
