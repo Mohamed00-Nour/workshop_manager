@@ -14,13 +14,16 @@ import 'features/auth/presentation/screens/login_screen.dart';
 import 'features/clients/data/repositories/client_repository.dart';
 import 'features/clients/presentation/bloc/clients_bloc.dart';
 import 'features/clients/presentation/screens/clients_list_screen.dart';
+import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   // Initialize Firebase (using local platform config files)
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
   } catch (e) {
     print('Firebase initialization error: $e');
   }

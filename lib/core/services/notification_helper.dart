@@ -1,47 +1,84 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 
 class NotificationHelper {
   static final NotificationHelper _instance = NotificationHelper._internal();
   factory NotificationHelper() => _instance;
   NotificationHelper._internal();
 
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseMessaging _fcm = FirebaseMessaging.instance;
+  bool get _isFirebaseInitialized => Firebase.apps.isNotEmpty;
+
+  FirebaseFirestore? get _firestore {
+    if (!_isFirebaseInitialized) return null;
+    return FirebaseFirestore.instance;
+  }
+
+  FirebaseMessaging? get _fcm {
+    if (!_isFirebaseInitialized) return null;
+    if (kIsWeb) return FirebaseMessaging.instance;
+    if (defaultTargetPlatform == TargetPlatform.android ||
+        defaultTargetPlatform == TargetPlatform.iOS ||
+        defaultTargetPlatform == TargetPlatform.macOS) {
+      return FirebaseMessaging.instance;
+    }
+    return null;
+  }
 
   Future<void> init() async {
-    // Request permission for push notifications
-    NotificationSettings settings = await _fcm.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
+    final fcm = _fcm;
+    if (fcm == null) {
+      print('Push notifications are not supported or Firebase is not initialized on this platform.');
+      return;
+    }
 
-    print('User granted notification permission: ${settings.authorizationStatus}');
+    try {
+      // Request permission for push notifications
+      NotificationSettings settings = await fcm.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
 
-    // Subscribe to a topic (e.g. "workshop_updates" so everyone gets notifications)
-    await _fcm.subscribeToTopic('workshop_updates');
+      print('User granted notification permission: ${settings.authorizationStatus}');
+
+      // Subscribe to a topic
+      await fcm.subscribeToTopic('workshop_updates');
+    } catch (e) {
+      print('Error initializing notifications: $e');
+    }
   }
 
   Future<String?> getDeviceToken() async {
-    return await _fcm.getToken();
+    final fcm = _fcm;
+    if (fcm == null) return null;
+    try {
+      return await fcm.getToken();
+    } catch (e) {
+      print('Error getting device token: $e');
+      return null;
+    }
   }
 
-  // Best Practice: Instead of using service account directly inside the app,
-  // we trigger the notification by writing a document to a Firestore 'notifications' collection.
-  // The secure backend script will listen to this collection and send the notification.
   Future<void> triggerNotification({
     required String title,
     required String body,
     String? topic,
     String? token,
   }) async {
+    final firestore = _firestore;
+    if (firestore == null) {
+      print('Skipping notification trigger: Firestore is not available.');
+      return;
+    }
+
     try {
-      await _firestore.collection('notifications').add({
+      await firestore.collection('notifications').add({
         'title': title,
         'body': body,
         'topic': topic ?? 'workshop_updates',

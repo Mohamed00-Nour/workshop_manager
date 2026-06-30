@@ -15,6 +15,9 @@ import '../../../payments/presentation/bloc/payments_event.dart';
 import '../../../payments/presentation/bloc/payments_state.dart';
 import '../../../payments/presentation/screens/add_payment_dialog.dart';
 import '../../domain/models/client_model.dart';
+import '../bloc/clients_bloc.dart';
+import '../bloc/clients_event.dart';
+import 'add_client_dialog.dart';
 
 class ClientDetailScreen extends StatefulWidget {
   final ClientModel client;
@@ -94,6 +97,53 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
             content: Text('Please wait until jobs and payments load completely.')),
       );
     }
+  }
+
+  void _showEditClientDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AddClientDialog(
+        client: widget.client,
+        onSave: (savedClient) {
+          context.read<ClientsBloc>().add(
+            UpdateClientRequested(savedClient),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.translate('success'))),
+          );
+        },
+      ),
+    );
+  }
+
+  void _showDeleteClientDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF1D1D30) : Colors.white,
+        title: Text(context.translate('delete')),
+        content: Text(context.translate('confirm_delete')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(context.translate('cancel'), style: const TextStyle(color: Colors.grey)),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              context.read<ClientsBloc>().add(
+                DeleteClientRequested(widget.client.id),
+              );
+              Navigator.pop(dialogContext); // close dialog
+              if (!widget.isTabletOrDesktopLayout) {
+                Navigator.pop(context); // close detail screen on mobile
+              }
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            child: Text(context.translate('delete')),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildJobImage(String url,
@@ -267,17 +317,46 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                     ],
                   ),
                 ),
-                // Share button
-                Container(
-                  decoration: BoxDecoration(
-                    color: accent.withAlpha(isDark ? 30 : 18),
-                    shape: BoxShape.circle,
-                  ),
-                  child: IconButton(
-                    icon: Icon(Icons.ios_share_outlined, color: accent),
-                    onPressed: _sharePdfStatement,
-                    tooltip: 'Share Statement',
-                  ),
+                // Action buttons (Edit, Delete, Share)
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withAlpha(isDark ? 30 : 18),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.edit_outlined, color: Colors.blue),
+                        onPressed: () => _showEditClientDialog(context),
+                        tooltip: context.translate('edit_client'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.red.withAlpha(isDark ? 30 : 18),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: const Icon(Icons.delete_outline, color: Colors.red),
+                        onPressed: () => _showDeleteClientDialog(context),
+                        tooltip: context.translate('delete'),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: accent.withAlpha(isDark ? 30 : 18),
+                        shape: BoxShape.circle,
+                      ),
+                      child: IconButton(
+                        icon: Icon(Icons.ios_share_outlined, color: accent),
+                        onPressed: _sharePdfStatement,
+                        tooltip: 'Share Statement',
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),

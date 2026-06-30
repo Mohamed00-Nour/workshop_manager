@@ -100,5 +100,13 @@
   "grace_minutes": "دقائق السماح للتأخير",
   "hourly_deduction_rate": "سعر خصم ساعة التأخير",
   "hourly_overtime_rate": "سعر ساعة العمل الإضافي",
-  "save_settings": "حفظ الإعدادات"
+  "save_settings": "حفظ الإعدادات",
+  "to": "إلى",
+  "calculate_payroll": "حساب الرواتب",
+  "select_range_payroll": "اختر فترة زمنية لحساب الرواتب",
+  "days": "أيام",
+  "mins": "دقيقة",
+  "hrs": "ساعة",
+  "deductible": "مستقطع",
+  "enter_overtime_minutes": "أدخل الوقت الإضافي بالدقائق"
 }

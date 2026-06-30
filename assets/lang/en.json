@@ -100,5 +100,13 @@
   "grace_minutes": "Allowed Grace Period (minutes)",
   "hourly_deduction_rate": "Hourly Deduction Rate",
   "hourly_overtime_rate": "Hourly Overtime Rate",
-  "save_settings": "Save Settings"
+  "save_settings": "Save Settings",
+  "to": "to",
+  "calculate_payroll": "Calculate Payroll",
+  "select_range_payroll": "Choose a date range to calculate payroll",
+  "days": "days",
+  "mins": "mins",
+  "hrs": "hrs",
+  "deductible": "deductible",
+  "enter_overtime_minutes": "Enter overtime in minutes"
 }

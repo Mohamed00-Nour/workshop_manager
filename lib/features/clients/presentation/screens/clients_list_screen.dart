@@ -297,6 +297,27 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 }
                 if (state is ClientsLoaded) {
                   final clients = state.filteredClients;
+
+                  if (_selectedClient != null) {
+                    final idx = clients.indexWhere((c) => c.id == _selectedClient!.id);
+                    if (idx == -1) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          _selectedClient = null;
+                        });
+                      });
+                    } else {
+                      final updated = clients[idx];
+                      if (updated != _selectedClient) {
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() {
+                            _selectedClient = updated;
+                          });
+                        });
+                      }
+                    }
+                  }
+
                   if (clients.isEmpty) {
                     return Center(child: Text(context.translate('no_clients')));
                   }

@@ -200,7 +200,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                           decoration: InputDecoration(
                             labelText: '${context.translate('overtime')} (${context.translate('late_minutes')})',
                             prefixIcon: const Icon(Icons.add_circle_outline),
-                            helperText: 'Enter overtime in minutes',
+                            helperText: context.translate('enter_overtime_minutes'),
                           ),
                         ),
                         const SizedBox(height: 12),
@@ -695,9 +695,9 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                       label: Text(dateFormat.format(_payrollStartDate)),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text('to'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(context.translate('to')),
                   ),
                   Expanded(
                     child: OutlinedButton.icon(
@@ -731,7 +731,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                     ));
                   },
                   icon: const Icon(Icons.calculate_outlined),
-                  label: const Text('Calculate Payroll'),
+                  label: Text(context.translate('calculate_payroll')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: accent,
                     foregroundColor: Theme.of(context).brightness == Brightness.dark ? const Color(0xFF131321) : Colors.white,
@@ -745,7 +745,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
 
         Expanded(
           child: state.weeklyAttendance.isEmpty
-              ? Center(child: Text('Choose a date range to calculate payroll', style: TextStyle(color: subtleText)))
+              ? Center(child: Text(context.translate('select_range_payroll'), style: TextStyle(color: subtleText)))
               : ListView.builder(
                   itemCount: state.employees.length,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -810,10 +810,10 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                             Divider(color: dividerColor),
                             const SizedBox(height: 8),
                             _payrollInfoRow(context, 'base_salary', '${emp.baseWeeklySalary} ${context.translate('currency')}', subtleText),
-                            _payrollInfoRow(context, 'present', '$daysWorked days', subtleText),
-                            _payrollInfoRow(context, 'absent', '$daysAbsent days', subtleText),
-                            _payrollInfoRow(context, 'late_minutes', '${totalLateMinutes} mins (${deductibleLateHours.toStringAsFixed(1)} hrs deductible)', subtleText),
-                            _payrollInfoRow(context, 'overtime', '${totalOvertimeMinutes} mins (${totalOvertimeHours.toStringAsFixed(1)} hrs)', subtleText),
+                            _payrollInfoRow(context, 'present', '$daysWorked ${context.translate('days')}', subtleText),
+                            _payrollInfoRow(context, 'absent', '$daysAbsent ${context.translate('days')}', subtleText),
+                            _payrollInfoRow(context, 'late_minutes', '${totalLateMinutes} ${context.translate('mins')} (${deductibleLateHours.toStringAsFixed(1)} ${context.translate('hrs')} ${context.translate('deductible')})', subtleText),
+                            _payrollInfoRow(context, 'overtime', '${totalOvertimeMinutes} ${context.translate('mins')} (${totalOvertimeHours.toStringAsFixed(1)} ${context.translate('hrs')})', subtleText),
                             const SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
