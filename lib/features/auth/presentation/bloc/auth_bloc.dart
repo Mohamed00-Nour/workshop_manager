@@ -25,9 +25,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         final email = cache.getSavedEmail();
         final password = cache.getSavedPassword();
         if (email != null && password != null) {
-          final loggedInUser = await _authRepository.login(email, password);
-          if (loggedInUser != null) {
-            emit(Authenticated(loggedInUser));
+          try {
+            final loggedInUser = await _authRepository.login(email, password);
+            if (loggedInUser != null) {
+              emit(Authenticated(loggedInUser));
+              return;
+            }
+          } catch (e) {
+            // Attempt offline fallback with cached user profile
+            final cachedUser = await _authRepository.getCachedUser();
+            if (cachedUser != null && cachedUser.email == email) {
+              emit(Authenticated(cachedUser));
+              return;
+            }
+            // If no match or cache empty, emit unauthenticated or error
+            emit(Unauthenticated());
             return;
           }
         }

@@ -206,8 +206,19 @@ class _LoginScreenState extends State<LoginScreen> {
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
             child: ResponsiveLayout(
-              mobile: Card(
-                margin: EdgeInsets.zero,
+              mobile: Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(isDark ? 100 : 15),
+                      blurRadius: 20,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
                 child: Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: formContent,
@@ -215,7 +226,19 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               tablet: SizedBox(
                 width: 480,
-                child: Card(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(isDark ? 100 : 15),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(32.0),
                     child: formContent,
@@ -224,7 +247,19 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               desktop: SizedBox(
                 width: 520,
-                child: Card(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    border: Border.all(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(isDark ? 100 : 15),
+                        blurRadius: 24,
+                        offset: const Offset(0, 8),
+                      ),
+                    ],
+                  ),
                   child: Padding(
                     padding: const EdgeInsets.all(40.0),
                     child: formContent,

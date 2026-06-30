@@ -79,6 +79,8 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
 
     final Color accent = isDark ? const Color(0xFF46F0D2) : const Color(0xFF0D9488);
     final Color dividerColor = isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0);
+    final Color cardBg = isDark ? const Color(0xFF1D1D30) : Colors.white;
+    final Color subtleText = isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70);
 
     // Sidebar navigation widget for tablet/desktop
     Widget customSidebar = Container(
@@ -138,14 +140,17 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                   _sidebarItem(
                     icon: Icons.admin_panel_settings_outlined,
                     label: context.translate('users'),
-                    selected: _currentNavigationIndex == 2,
+                    selected: false,
                     onTap: () {
-                      setState(() {
-                        _currentNavigationIndex = 2;
-                      });
                       if (ResponsiveLayout.isMobile(context)) {
                         Navigator.pop(context);
                       }
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserManagementScreen(authRepository: widget.authRepository),
+                        ),
+                      );
                     },
                     isDark: isDark,
                     accent: accent,
@@ -341,53 +346,34 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                         final client = clients[index];
                         final isSelected = _selectedClient?.id == client.id;
 
-                        return Card(
-                          color:
-                              isSelected && !ResponsiveLayout.isMobile(context)
-                                  ? Theme.of(
-                                    context,
-                                  ).colorScheme.primaryContainer.withAlpha(40)
-                                  : null,
-                          child: ListTile(
-                            title: Text(
-                              client.name,
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
+                        return Container(
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected && !ResponsiveLayout.isMobile(context)
+                                ? Theme.of(context).colorScheme.primaryContainer.withAlpha(isDark ? 40 : 25)
+                                : cardBg,
+                            borderRadius: BorderRadius.circular(18),
+                            border: Border.all(
+                              color: isSelected && !ResponsiveLayout.isMobile(context)
+                                  ? accent
+                                  : dividerColor,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(isDark ? 80 : 10),
+                                blurRadius: 10,
+                                offset: const Offset(0, 4),
                               ),
-                            ),
-                            subtitle: Text(
-                              '${client.phone} | ${client.company}',
-                            ),
-                            trailing: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              children: [
-                                Text(
-                                  '${client.currentBalance} ${context.translate('currency')}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color:
-                                        client.currentBalance > 0
-                                            ? (isDark
-                                                ? const Color(0xFFFBE2B4)
-                                                : Colors.red)
-                                            : Colors.green,
-                                  ),
-                                ),
-                                Text(
-                                  context.translate('balance'),
-                                  style: Theme.of(context).textTheme.bodySmall,
-                                ),
-                              ],
-                            ),
+                            ],
+                          ),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(18),
                             onTap: () {
                               if (ResponsiveLayout.isMobile(context)) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder:
-                                        (context) =>
-                                            ClientDetailScreen(client: client),
+                                    builder: (context) => ClientDetailScreen(client: client),
                                   ),
                                 ).then((_) {
                                   // Reload to update any aggregates
@@ -401,6 +387,82 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                                 });
                               }
                             },
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: 48,
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: accent.withAlpha(isDark ? 35 : 20),
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Icon(Icons.person_outline, color: accent, size: 24),
+                                  ),
+                                  const SizedBox(width: 14),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          client.name,
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 15,
+                                            color: isDark ? Colors.white : const Color(0xFF131321),
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            Icon(Icons.phone_outlined, size: 12, color: subtleText),
+                                            const SizedBox(width: 4),
+                                            Text(client.phone, style: TextStyle(fontSize: 12, color: subtleText)),
+                                            if (client.company.isNotEmpty) ...[
+                                              const SizedBox(width: 12),
+                                              Icon(Icons.business_outlined, size: 12, color: subtleText),
+                                              const SizedBox(width: 4),
+                                              Expanded(
+                                                child: Text(
+                                                  client.company,
+                                                  style: TextStyle(fontSize: 12, color: subtleText),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                            ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '${client.currentBalance} ${context.translate('currency')}',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: client.currentBalance > 0
+                                              ? (isDark ? const Color(0xFFFBE2B4) : Colors.red)
+                                              : Colors.green,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        context.translate('balance'),
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: subtleText,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
                           ),
                         );
                       },
@@ -438,9 +500,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             drawer: sidebar,
             body: _currentNavigationIndex == 0
                 ? clientListContent
-                : _currentNavigationIndex == 1
-                    ? const EmployeesDashboardScreen()
-                    : UserManagementScreen(authRepository: widget.authRepository),
+                : const EmployeesDashboardScreen(),
             floatingActionButton: _currentNavigationIndex == 0
                 ? FloatingActionButton(
                     onPressed: () => _showAddEditClientDialog(),
@@ -472,9 +532,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                           ),
                         ],
                       )
-                    : _currentNavigationIndex == 1
-                        ? const EmployeesDashboardScreen()
-                        : UserManagementScreen(authRepository: widget.authRepository),
+                    : const EmployeesDashboardScreen(),
               ),
             ],
           ),
@@ -502,9 +560,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                           ),
                         ],
                       )
-                    : _currentNavigationIndex == 1
-                        ? const EmployeesDashboardScreen()
-                        : UserManagementScreen(authRepository: widget.authRepository),
+                    : const EmployeesDashboardScreen(),
               ),
             ],
           ),
@@ -537,10 +593,6 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                     BottomNavigationBarItem(
                       icon: const Icon(Icons.badge_outlined),
                       label: context.translate('employees'),
-                    ),
-                    BottomNavigationBarItem(
-                      icon: const Icon(Icons.admin_panel_settings_outlined),
-                      label: context.translate('users'),
                     ),
                   ],
                 ),

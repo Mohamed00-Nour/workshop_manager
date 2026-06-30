@@ -245,31 +245,78 @@ class _UserManagementScreenState extends State<UserManagementScreen> {
                 final user = users[index];
                 final isAdmin = user.role == 'admin';
 
-                return Card(
-                  color: isDark ? const Color(0xFF1D1D30) : Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                    side: BorderSide(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 14),
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(
+                      color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0),
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(isDark ? 80 : 10),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: ListTile(
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: CircleAvatar(
-                      backgroundColor: isAdmin ? Colors.amber.withAlpha(30) : accent.withAlpha(30),
-                      foregroundColor: isAdmin ? Colors.amber : accent,
-                      child: Icon(isAdmin ? Icons.admin_panel_settings : Icons.engineering),
-                    ),
-                    title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                    subtitle: Text(
-                      '${user.email} (${context.translate(user.role)})',
-                      style: TextStyle(color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70)),
-                    ),
-                    trailing: isAdmin
-                        ? null
-                        : IconButton(
-                            icon: const Icon(Icons.delete_outline, color: Colors.red),
-                            onPressed: () => _deleteUser(user.uid),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: isAdmin ? Colors.amber.withAlpha(30) : accent.withAlpha(30),
+                            borderRadius: BorderRadius.circular(12),
                           ),
+                          child: Icon(
+                            isAdmin ? Icons.admin_panel_settings : Icons.engineering,
+                            color: isAdmin ? Colors.amber : accent,
+                          ),
+                        ),
+                        const SizedBox(width: 14),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                user.name,
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 15,
+                                  color: isDark ? Colors.white : const Color(0xFF131321),
+                                ),
+                              ),
+                              const SizedBox(height: 6),
+                              Text(
+                                '${user.email} (${context.translate(user.role)})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (!isAdmin)
+                          Container(
+                            width: 38,
+                            height: 38,
+                            decoration: BoxDecoration(
+                              color: Colors.red.withAlpha(isDark ? 30 : 15),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                              onPressed: () => _deleteUser(user.uid),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 );
               },

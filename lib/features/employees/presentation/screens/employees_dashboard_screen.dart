@@ -912,8 +912,8 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                             _payrollInfoRow(context, 'base_salary', '${emp.baseWeeklySalary} ${context.translate('currency')}', subtleText),
                             _payrollInfoRow(context, 'present', '$daysWorked ${context.translate('days')}', subtleText),
                             _payrollInfoRow(context, 'absent', '$daysAbsent ${context.translate('days')}', subtleText),
-                            _payrollInfoRow(context, 'late_minutes', '${totalLateMinutes} ${context.translate('mins')} (${deductibleLateHours.toStringAsFixed(1)} ${context.translate('hrs')} ${context.translate('deductible')})', subtleText),
-                            _payrollInfoRow(context, 'overtime', '${totalOvertimeMinutes} ${context.translate('mins')} (${totalOvertimeHours.toStringAsFixed(1)} ${context.translate('hrs')})', subtleText),
+                            _payrollInfoRow(context, 'late_minutes', '$totalLateMinutes ${context.translate('mins')} (${deductibleLateHours.toStringAsFixed(1)} ${context.translate('hrs')} ${context.translate('deductible')})', subtleText),
+                            _payrollInfoRow(context, 'overtime', '$totalOvertimeMinutes ${context.translate('mins')} (${totalOvertimeHours.toStringAsFixed(1)} ${context.translate('hrs')})', subtleText),
                             const SizedBox(height: 8),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
