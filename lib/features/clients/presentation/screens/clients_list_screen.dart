@@ -372,7 +372,11 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 end: Alignment.bottomRight,
                 colors: [Color(0xFF131321), Color(0xFF1F1F35), Color(0xFF131321)],
               )
-            : null,
+            : const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Color(0xFFF7F7FA), Color(0xFFFFFFFF), Color(0xFFF7F7FA)],
+              ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
