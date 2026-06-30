@@ -2,22 +2,27 @@ import 'package:flutter/material.dart';
 
 class AppTheme {
   // Light Theme Colors
-  static const Color lightBg = Color(0xFFF8FAFC);
+  static const Color lightBg = Color(0xFFF7F7FA);
   static const Color lightSurface = Colors.white;
-  static const Color lightPrimary = Color(0xFF0F172A); // Dark slate
-  static const Color lightSecondary = Color(0xFF0D9488); // Teal
+  static const Color lightPrimary = Color(0xFF131321); // Dark slate from reference
+  static const Color lightSecondary = Color(0xFF0F766E); // Soft teal
   static const Color lightBorder = Color(0xFFE2E8F0);
-  static const Color lightTextPrimary = Color(0xFF0F172A);
-  static const Color lightTextSecondary = Color(0xFF475569);
+  static const Color lightTextPrimary = Color(0xFF131321);
+  static const Color lightTextSecondary = Color(0xFF5D5D70);
 
+  // Reference Palette Colors
+  static const Color refTeal = Color(0xFF46F0D2); // Teal Accent
+  static const Color refDark = Color(0xFF131321); // Dark Slate Background
+  static const Color refBeige = Color(0xFFFBE2B4); // Creamy Beige
+  
   // Dark Theme Colors
-  static const Color darkBg = Color(0xFF0B111E); // Slate-black
-  static const Color darkSurface = Color(0xFF151F32); // Deep blue-gray
-  static const Color darkPrimary = Color(0xFF38BDF8); // Sky blue
-  static const Color darkSecondary = Color(0xFF2DD4BF); // Teal dark
-  static const Color darkBorder = Color(0xFF1E293B);
-  static const Color darkTextPrimary = Color(0xFFF8FAFC);
-  static const Color darkTextSecondary = Color(0xFF94A3B8);
+  static const Color darkBg = refDark; 
+  static const Color darkSurface = Color(0xFF1D1D30); // Lighter slate for cards/panels
+  static const Color darkPrimary = refTeal; // Neon Teal Accent
+  static const Color darkSecondary = refBeige; // Warm highlights/alerts
+  static const Color darkBorder = Color(0xFF2D2D44);
+  static const Color darkTextPrimary = Colors.white;
+  static const Color darkTextSecondary = Color(0xFF9090A0);
 
   static ThemeData get lightTheme {
     return ThemeData(
@@ -43,6 +48,7 @@ class AppTheme {
         backgroundColor: lightSurface,
         foregroundColor: lightTextPrimary,
         elevation: 0,
+        centerTitle: false,
         shape: Border(
           bottom: BorderSide(color: lightBorder, width: 1),
         ),
@@ -111,6 +117,7 @@ class AppTheme {
         secondary: darkSecondary,
         surface: darkSurface,
         error: Color(0xFFF87171),
+        surfaceContainerHighest: Color(0xFF1B1B2A),
       ),
       cardTheme: const CardTheme(
         color: darkSurface,
@@ -121,9 +128,10 @@ class AppTheme {
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: darkSurface,
+        backgroundColor: darkBg,
         foregroundColor: darkTextPrimary,
         elevation: 0,
+        centerTitle: false,
         shape: Border(
           bottom: BorderSide(color: darkBorder, width: 1),
         ),
@@ -142,7 +150,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: darkSecondary, width: 2),
+          borderSide: const BorderSide(color: darkPrimary, width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -152,7 +160,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: darkPrimary,
-          foregroundColor: const Color(0xFF0B111E),
+          foregroundColor: refDark,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
           shape: RoundedRectangleBorder(
@@ -171,6 +179,14 @@ class AppTheme {
           ),
           textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: darkPrimary,
+        foregroundColor: refDark,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: darkBorder,
+        thickness: 1,
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(color: darkTextPrimary, fontWeight: FontWeight.bold, fontSize: 20),

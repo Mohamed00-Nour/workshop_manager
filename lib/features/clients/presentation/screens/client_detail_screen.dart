@@ -129,9 +129,32 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
     final primaryColor = Theme.of(context).primaryColor;
     final dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
-    Widget profileHeader = Card(
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
+    Widget profileHeader = Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: isDark
+              ? [const Color(0xFF1D1D30), const Color(0xFF23233C)]
+              : [Colors.white, const Color(0xFFF1F5F9)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0),
+          width: 1,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 40 : 10),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -142,20 +165,40 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.client.name, style: Theme.of(context).textTheme.titleLarge),
-                      Text('${widget.client.phone} | ${widget.client.company}',
-                          style: Theme.of(context).textTheme.bodyMedium),
+                      Text(
+                        widget.client.name,
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                            ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        '${widget.client.phone}  |  ${widget.client.company}',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                            ),
+                      ),
                     ],
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.share, color: Colors.blue),
-                  onPressed: _sharePdfStatement,
+                Container(
+                  decoration: BoxDecoration(
+                    color: isDark ? const Color(0xFF46F0D2).withAlpha(30) : const Color(0xFF0F766E).withAlpha(15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: IconButton(
+                    icon: Icon(
+                      Icons.share_outlined,
+                      color: isDark ? const Color(0xFF46F0D2) : const Color(0xFF0F766E),
+                    ),
+                    onPressed: _sharePdfStatement,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            const Divider(),
+            Divider(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -164,18 +207,38 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                   children: [
                     Text(
                       '${widget.client.totalJobsCost} ${context.translate('currency')}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: isDark ? Colors.white : const Color(0xFF131321),
+                      ),
                     ),
-                    Text(context.translate('total_cost'), style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.translate('total_cost'),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                          ),
+                    ),
                   ],
                 ),
                 Column(
                   children: [
                     Text(
                       '${widget.client.totalPaidAmount} ${context.translate('currency')}',
-                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.green),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Colors.green,
+                      ),
                     ),
-                    Text(context.translate('total_paid'), style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.translate('total_paid'),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                          ),
+                    ),
                   ],
                 ),
                 Column(
@@ -185,10 +248,18 @@ class _ClientDetailScreenState extends State<ClientDetailScreen>
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,
-                        color: widget.client.currentBalance > 0 ? Colors.red : Colors.green,
+                        color: widget.client.currentBalance > 0
+                            ? (isDark ? const Color(0xFFFBE2B4) : Colors.red)
+                            : Colors.green,
                       ),
                     ),
-                    Text(context.translate('balance'), style: Theme.of(context).textTheme.bodySmall),
+                    const SizedBox(height: 4),
+                    Text(
+                      context.translate('balance'),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                          ),
+                    ),
                   ],
                 ),
               ],

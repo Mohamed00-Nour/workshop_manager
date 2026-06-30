@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import '../../../../core/localization/app_localizations.dart';
 import '../../../../core/utils/responsive_layout.dart';
 import '../../../auth/domain/models/user_model.dart';
@@ -158,31 +159,84 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
     );
 
     // List of clients with search bar
-    Widget clientListContent = Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: TextField(
-            controller: _searchController,
-            onChanged: (val) {
-              context.read<ClientsBloc>().add(SearchClients(val));
-            },
-            decoration: InputDecoration(
-              hintText: context.translate('search'),
-              prefixIcon: const Icon(Icons.search),
-              suffixIcon: _searchController.text.isNotEmpty
-                  ? IconButton(
-                      icon: const Icon(Icons.clear),
+    Widget clientListContent = SafeArea(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 8.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Text(
+                          '${Localizations.localeOf(context).languageCode == 'ar' ? 'مرحباً،' : 'Hey,'} ',
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                fontWeight: FontWeight.normal,
+                                fontSize: 22,
+                              ),
+                        ),
+                        Text(
+                          widget.currentUser.name,
+                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                                fontSize: 22,
+                              ),
+                        ),
+                        const Text(
+                          '!',
+                          style: TextStyle(fontSize: 22),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      DateFormat('EEEE, MMM dd, yyyy', Localizations.localeOf(context).languageCode).format(DateTime.now()),
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
+                          ),
+                    ),
+                  ],
+                ),
+                if (ResponsiveLayout.isMobile(context))
+                  Builder(
+                    builder: (context) => IconButton(
+                      icon: const Icon(Icons.menu),
                       onPressed: () {
-                        _searchController.clear();
-                        context.read<ClientsBloc>().add(const SearchClients(''));
+                        Scaffold.of(context).openDrawer();
                       },
-                    )
-                  : null,
+                    ),
+                  ),
+              ],
             ),
           ),
-        ),
-        Expanded(
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            child: TextField(
+              controller: _searchController,
+              onChanged: (val) {
+                context.read<ClientsBloc>().add(SearchClients(val));
+              },
+              decoration: InputDecoration(
+                hintText: context.translate('search'),
+                prefixIcon: const Icon(Icons.search),
+                suffixIcon: _searchController.text.isNotEmpty
+                    ? IconButton(
+                        icon: const Icon(Icons.clear),
+                        onPressed: () {
+                          _searchController.clear();
+                          context.read<ClientsBloc>().add(const SearchClients(''));
+                        },
+                      )
+                    : null,
+              ),
+            ),
+          ),
+          Expanded(
           child: BlocBuilder<ClientsBloc, ClientsState>(
             builder: (context, state) {
               if (state is ClientsLoading) {
@@ -225,7 +279,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: client.currentBalance > 0
-                                      ? Colors.red
+                                      ? (isDark ? const Color(0xFFFBE2B4) : Colors.red)
                                       : Colors.green,
                                 ),
                               ),
@@ -266,11 +320,6 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
     );
 
     return Scaffold(
-      appBar: ResponsiveLayout.isMobile(context)
-          ? AppBar(
-              title: Text(context.translate('app_name')),
-            )
-          : null,
       drawer: ResponsiveLayout.isMobile(context) ? sidebar : null,
       body: ResponsiveLayout(
         mobile: Scaffold(

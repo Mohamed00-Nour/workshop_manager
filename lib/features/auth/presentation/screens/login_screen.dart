@@ -183,32 +183,43 @@ class _LoginScreenState extends State<LoginScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: ResponsiveLayout(
-            mobile: Card(
-              margin: EdgeInsets.zero,
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: formContent,
-              ),
-            ),
-            tablet: SizedBox(
-              width: 480,
-              child: Card(
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: isDark
+              ? const LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xFF131321), Color(0xFF1F1F35), Color(0xFF131321)],
+                )
+              : null,
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: ResponsiveLayout(
+              mobile: Card(
+                margin: EdgeInsets.zero,
                 child: Padding(
-                  padding: const EdgeInsets.all(32.0),
+                  padding: const EdgeInsets.all(24.0),
                   child: formContent,
                 ),
               ),
-            ),
-            desktop: SizedBox(
-              width: 520,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(40.0),
-                  child: formContent,
+              tablet: SizedBox(
+                width: 480,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(32.0),
+                    child: formContent,
+                  ),
+                ),
+              ),
+              desktop: SizedBox(
+                width: 520,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(40.0),
+                    child: formContent,
+                  ),
                 ),
               ),
             ),
