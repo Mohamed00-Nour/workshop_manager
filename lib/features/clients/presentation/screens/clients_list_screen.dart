@@ -14,6 +14,7 @@ import '../bloc/clients_event.dart';
 import '../bloc/clients_state.dart';
 import 'add_client_dialog.dart';
 import 'client_detail_screen.dart';
+import '../../../employees/presentation/screens/employees_dashboard_screen.dart';
 
 class ClientsListScreen extends StatefulWidget {
   final UserModel currentUser;
@@ -36,6 +37,7 @@ class ClientsListScreen extends StatefulWidget {
 class _ClientsListScreenState extends State<ClientsListScreen> {
   ClientModel? _selectedClient;
   final _searchController = TextEditingController();
+  int _currentNavigationIndex = 0;
 
   @override
   void initState() {
@@ -115,11 +117,31 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
           ),
           ListTile(
             leading: const Icon(Icons.people_outline),
-            title: Text(context.translate('app_name')),
-            selected: true,
-            onTap: () {},
+            title: Text(context.translate('clients')),
+            selected: _currentNavigationIndex == 0,
+            onTap: () {
+              setState(() {
+                _currentNavigationIndex = 0;
+              });
+              if (ResponsiveLayout.isMobile(context)) {
+                Navigator.pop(context);
+              }
+            },
           ),
-          if (isAdmin)
+          if (isAdmin) ...[
+            ListTile(
+              leading: const Icon(Icons.badge_outlined),
+              title: Text(context.translate('employees')),
+              selected: _currentNavigationIndex == 1,
+              onTap: () {
+                setState(() {
+                  _currentNavigationIndex = 1;
+                });
+                if (ResponsiveLayout.isMobile(context)) {
+                  Navigator.pop(context);
+                }
+              },
+            ),
             ListTile(
               leading: const Icon(Icons.admin_panel_settings_outlined),
               title: Text(context.translate('users')),
@@ -135,6 +157,7 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 );
               },
             ),
+          ],
           const Spacer(),
           ListTile(
             leading: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
@@ -385,62 +408,117 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
           mobile: Scaffold(
             backgroundColor: Colors.transparent,
             drawer: sidebar,
-            body: clientListContent,
-          floatingActionButton: FloatingActionButton(
-            onPressed: () => _showAddEditClientDialog(),
-            child: const Icon(Icons.add),
+            body: _currentNavigationIndex == 0
+                ? clientListContent
+                : const EmployeesDashboardScreen(),
+            floatingActionButton: _currentNavigationIndex == 0
+                ? FloatingActionButton(
+                    onPressed: () => _showAddEditClientDialog(),
+                    child: const Icon(Icons.add),
+                  )
+                : null,
           ),
+          tablet: _currentNavigationIndex == 0
+              ? Row(
+                  children: [
+                    SizedBox(width: 250, child: sidebar),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    SizedBox(width: 320, child: clientListContent),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    Expanded(
+                      child: _selectedClient == null
+                          ? Center(child: Text(context.translate('no_data')))
+                          : Scaffold(
+                              backgroundColor: Colors.transparent,
+                              body: ClientDetailScreen(
+                                client: _selectedClient!,
+                                isTabletOrDesktopLayout: true,
+                              ),
+                              key: ValueKey(_selectedClient!.id),
+                            ),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    SizedBox(width: 250, child: sidebar),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    const Expanded(
+                      child: EmployeesDashboardScreen(),
+                    ),
+                  ],
+                ),
+          desktop: _currentNavigationIndex == 0
+              ? Row(
+                  children: [
+                    SizedBox(width: 280, child: sidebar),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    SizedBox(width: 380, child: clientListContent),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    Expanded(
+                      child: _selectedClient == null
+                          ? Center(child: Text(context.translate('no_data')))
+                          : Scaffold(
+                              backgroundColor: Colors.transparent,
+                              body: ClientDetailScreen(
+                                client: _selectedClient!,
+                                isTabletOrDesktopLayout: true,
+                              ),
+                              key: ValueKey(_selectedClient!.id),
+                            ),
+                    ),
+                  ],
+                )
+              : Row(
+                  children: [
+                    SizedBox(width: 280, child: sidebar),
+                    VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
+                    const Expanded(
+                      child: EmployeesDashboardScreen(),
+                    ),
+                  ],
+                ),
         ),
-        tablet: Row(
-          children: [
-            SizedBox(width: 250, child: sidebar),
-            VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-            SizedBox(width: 320, child: clientListContent),
-            VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-            Expanded(
-              child:
-                  _selectedClient == null
-                      ? Center(child: Text(context.translate('no_data')))
-                      : Scaffold(
-                        backgroundColor: Colors.transparent,
-                        body: ClientDetailScreen(
-                          client: _selectedClient!,
-                          isTabletOrDesktopLayout: true,
-                        ),
-                        key: ValueKey(_selectedClient!.id),
-                      ),
-            ),
-          ],
-        ),
-        desktop: Row(
-          children: [
-            SizedBox(width: 280, child: sidebar),
-            VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-            SizedBox(width: 380, child: clientListContent),
-            VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
-            Expanded(
-              child:
-                  _selectedClient == null
-                      ? Center(child: Text(context.translate('no_data')))
-                      : Scaffold(
-                        backgroundColor: Colors.transparent,
-                        body: ClientDetailScreen(
-                          client: _selectedClient!,
-                          isTabletOrDesktopLayout: true,
-                        ),
-                        key: ValueKey(_selectedClient!.id),
-                      ),
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton:
-          ResponsiveLayout.isMobile(context)
-              ? null
-              : FloatingActionButton(
+        bottomNavigationBar: isAdmin && ResponsiveLayout.isMobile(context)
+            ? Container(
+                decoration: BoxDecoration(
+                  color: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                  border: Border(
+                    top: BorderSide(color: isDark ? const Color(0xFF2C2C45) : const Color(0xFFE2E8F0)),
+                  ),
+                ),
+                child: BottomNavigationBar(
+                  currentIndex: _currentNavigationIndex,
+                  onTap: (index) {
+                    setState(() {
+                      _currentNavigationIndex = index;
+                    });
+                  },
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  selectedItemColor: isDark ? const Color(0xFF46F0D2) : const Color(0xFF0D9488),
+                  unselectedItemColor: isDark ? const Color(0xFF9090A0) : const Color(0xFF5D5D70),
+                  selectedLabelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  items: [
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.people_outline),
+                      label: context.translate('clients'),
+                    ),
+                    BottomNavigationBarItem(
+                      icon: const Icon(Icons.badge_outlined),
+                      label: context.translate('employees'),
+                    ),
+                  ],
+                ),
+              )
+            : null,
+        floatingActionButton: ResponsiveLayout.isMobile(context) || _currentNavigationIndex == 1
+            ? null
+            : FloatingActionButton(
                 onPressed: () => _showAddEditClientDialog(),
                 child: const Icon(Icons.add),
               ),
-    ),);
+      ),
+    );
   }
 }
