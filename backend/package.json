@@ -1,0 +1,9 @@
+{
+  "name": "workshop-manager-notification-server",
+  "version": "1.0.0",
+  "description": "Secure FCM V1 notification server",
+  "main": "server.js",
+  "dependencies": {
+    "firebase-admin": "^12.0.0"
+  }
+}
