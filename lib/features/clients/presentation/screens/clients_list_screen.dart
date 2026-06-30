@@ -52,16 +52,21 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
   void _showAddEditClientDialog([ClientModel? client]) {
     showDialog(
       context: context,
-      builder: (context) => AddClientDialog(
-        client: client,
-        onSave: (savedClient) {
-          if (client == null) {
-            context.read<ClientsBloc>().add(AddClientRequested(savedClient));
-          } else {
-            context.read<ClientsBloc>().add(UpdateClientRequested(savedClient));
-          }
-        },
-      ),
+      builder:
+          (context) => AddClientDialog(
+            client: client,
+            onSave: (savedClient) {
+              if (client == null) {
+                context.read<ClientsBloc>().add(
+                  AddClientRequested(savedClient),
+                );
+              } else {
+                context.read<ClientsBloc>().add(
+                  UpdateClientRequested(savedClient),
+                );
+              }
+            },
+          ),
     );
   }
 
@@ -80,14 +85,14 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               border: Border(
-                bottom: BorderSide(color: Theme.of(context).dividerColor.withAlpha(50)),
+                bottom: BorderSide(
+                  color: Theme.of(context).dividerColor.withAlpha(50),
+                ),
               ),
             ),
             child: Row(
               children: [
-                const CircleAvatar(
-                  child: Icon(Icons.engineering),
-                ),
+                const CircleAvatar(child: Icon(Icons.engineering)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -122,9 +127,10 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserManagementScreen(
-                      authRepository: widget.authRepository,
-                    ),
+                    builder:
+                        (context) => UserManagementScreen(
+                          authRepository: widget.authRepository,
+                        ),
                   ),
                 );
               },
@@ -132,7 +138,11 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
           const Spacer(),
           ListTile(
             leading: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
-            title: Text(isDark ? context.translate('theme_light') : context.translate('theme_dark')),
+            title: Text(
+              isDark
+                  ? context.translate('theme_light')
+                  : context.translate('theme_dark'),
+            ),
             onTap: () {
               widget.onThemeChanged(isDark ? ThemeMode.light : ThemeMode.dark);
             },
@@ -141,15 +151,19 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             leading: const Icon(Icons.translate),
             title: Text(context.translate('language')),
             onTap: () {
-              final newLocale = Localizations.localeOf(context).languageCode == 'ar'
-                  ? const Locale('en')
-                  : const Locale('ar');
+              final newLocale =
+                  Localizations.localeOf(context).languageCode == 'ar'
+                      ? const Locale('en')
+                      : const Locale('ar');
               widget.onLanguageChanged(newLocale);
             },
           ),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: Text(context.translate('logout'), style: const TextStyle(color: Colors.red)),
+            title: Text(
+              context.translate('logout'),
+              style: const TextStyle(color: Colors.red),
+            ),
             onTap: () {
               context.read<AuthBloc>().add(LogoutRequested());
             },
@@ -175,47 +189,57 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
                       children: [
                         Text(
                           '${Localizations.localeOf(context).languageCode == 'ar' ? 'مرحباً،' : 'Hey,'} ',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 22,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.normal,
+                            fontSize: 22,
+                          ),
                         ),
                         Text(
                           widget.currentUser.name,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                color: Theme.of(context).colorScheme.primary,
-                                fontSize: 22,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.titleLarge?.copyWith(
+                            color: Theme.of(context).colorScheme.primary,
+                            fontSize: 22,
+                          ),
                         ),
-                        const Text(
-                          '!',
-                          style: TextStyle(fontSize: 22),
-                        ),
+                        const Text('!', style: TextStyle(fontSize: 22)),
                       ],
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      DateFormat('EEEE, MMM dd, yyyy', Localizations.localeOf(context).languageCode).format(DateTime.now()),
+                      DateFormat(
+                        'EEEE, MMM dd, yyyy',
+                        Localizations.localeOf(context).languageCode,
+                      ).format(DateTime.now()),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withAlpha(120),
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withAlpha(120),
+                      ),
                     ),
                   ],
                 ),
                 if (ResponsiveLayout.isMobile(context))
                   Builder(
-                    builder: (context) => IconButton(
-                      icon: const Icon(Icons.menu),
-                      onPressed: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    ),
+                    builder:
+                        (context) => IconButton(
+                          icon: const Icon(Icons.menu),
+                          onPressed: () {
+                            Scaffold.of(context).openDrawer();
+                          },
+                        ),
                   ),
               ],
             ),
           ),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16.0,
+              vertical: 8.0,
+            ),
             child: TextField(
               controller: _searchController,
               onChanged: (val) {
@@ -224,105 +248,126 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
               decoration: InputDecoration(
                 hintText: context.translate('search'),
                 prefixIcon: const Icon(Icons.search),
-                suffixIcon: _searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _searchController.clear();
-                          context.read<ClientsBloc>().add(const SearchClients(''));
-                        },
-                      )
-                    : null,
+                suffixIcon:
+                    _searchController.text.isNotEmpty
+                        ? IconButton(
+                          icon: const Icon(Icons.clear),
+                          onPressed: () {
+                            _searchController.clear();
+                            context.read<ClientsBloc>().add(
+                              const SearchClients(''),
+                            );
+                          },
+                        )
+                        : null,
               ),
             ),
           ),
           Expanded(
-          child: BlocBuilder<ClientsBloc, ClientsState>(
-            builder: (context, state) {
-              if (state is ClientsLoading) {
-                return const Center(child: CircularProgressIndicator());
-              }
-              if (state is ClientsError) {
-                return Center(child: Text(state.message));
-              }
-              if (state is ClientsLoaded) {
-                final clients = state.filteredClients;
-                if (clients.isEmpty) {
-                  return Center(
-                    child: Text(context.translate('no_clients')),
-                  );
+            child: BlocBuilder<ClientsBloc, ClientsState>(
+              builder: (context, state) {
+                if (state is ClientsLoading) {
+                  return const Center(child: CircularProgressIndicator());
                 }
-                return RefreshIndicator(
-                  onRefresh: () async {
-                    context.read<ClientsBloc>().add(const LoadClients(refreshFromServer: true));
-                  },
-                  child: ListView.builder(
-                    itemCount: clients.length,
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    itemBuilder: (context, index) {
-                      final client = clients[index];
-                      final isSelected = _selectedClient?.id == client.id;
-                      
-                      return Card(
-                        color: isSelected && !ResponsiveLayout.isMobile(context)
-                            ? Theme.of(context).colorScheme.primaryContainer.withAlpha(40)
-                            : null,
-                        child: ListTile(
-                          title: Text(client.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                          subtitle: Text('${client.phone} | ${client.company}'),
-                          trailing: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${client.currentBalance} ${context.translate('currency')}',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: client.currentBalance > 0
-                                      ? (isDark ? const Color(0xFFFBE2B4) : Colors.red)
-                                      : Colors.green,
-                                ),
-                              ),
-                              Text(
-                                context.translate('balance'),
-                                style: Theme.of(context).textTheme.bodySmall,
-                              ),
-                            ],
-                          ),
-                          onTap: () {
-                            if (ResponsiveLayout.isMobile(context)) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => ClientDetailScreen(client: client),
-                                ),
-                              ).then((_) {
-                                // Reload to update any aggregates
-                                context.read<ClientsBloc>().add(const LoadClients(refreshFromServer: false));
-                              });
-                            } else {
-                              setState(() {
-                                _selectedClient = client;
-                              });
-                            }
-                          },
-                        ),
+                if (state is ClientsError) {
+                  return Center(child: Text(state.message));
+                }
+                if (state is ClientsLoaded) {
+                  final clients = state.filteredClients;
+                  if (clients.isEmpty) {
+                    return Center(child: Text(context.translate('no_clients')));
+                  }
+                  return RefreshIndicator(
+                    onRefresh: () async {
+                      context.read<ClientsBloc>().add(
+                        const LoadClients(refreshFromServer: true),
                       );
                     },
-                  ),
-                );
-              }
-              return Container();
-            },
+                    child: ListView.builder(
+                      itemCount: clients.length,
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      itemBuilder: (context, index) {
+                        final client = clients[index];
+                        final isSelected = _selectedClient?.id == client.id;
+
+                        return Card(
+                          color:
+                              isSelected && !ResponsiveLayout.isMobile(context)
+                                  ? Theme.of(
+                                    context,
+                                  ).colorScheme.primaryContainer.withAlpha(40)
+                                  : null,
+                          child: ListTile(
+                            title: Text(
+                              client.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${client.phone} | ${client.company}',
+                            ),
+                            trailing: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              children: [
+                                Text(
+                                  '${client.currentBalance} ${context.translate('currency')}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color:
+                                        client.currentBalance > 0
+                                            ? (isDark
+                                                ? const Color(0xFFFBE2B4)
+                                                : Colors.red)
+                                            : Colors.green,
+                                  ),
+                                ),
+                                Text(
+                                  context.translate('balance'),
+                                  style: Theme.of(context).textTheme.bodySmall,
+                                ),
+                              ],
+                            ),
+                            onTap: () {
+                              if (ResponsiveLayout.isMobile(context)) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (context) =>
+                                            ClientDetailScreen(client: client),
+                                  ),
+                                ).then((_) {
+                                  // Reload to update any aggregates
+                                  context.read<ClientsBloc>().add(
+                                    const LoadClients(refreshFromServer: false),
+                                  );
+                                });
+                              } else {
+                                setState(() {
+                                  _selectedClient = client;
+                                });
+                              }
+                            },
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                }
+                return Container();
+              },
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
 
     return Scaffold(
-      drawer: ResponsiveLayout.isMobile(context) ? sidebar : null,
       body: ResponsiveLayout(
         mobile: Scaffold(
+          drawer: sidebar,
           body: clientListContent,
           floatingActionButton: FloatingActionButton(
             onPressed: () => _showAddEditClientDialog(),
@@ -336,15 +381,16 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             SizedBox(width: 320, child: clientListContent),
             VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
             Expanded(
-              child: _selectedClient == null
-                  ? Center(child: Text(context.translate('no_data')))
-                  : Scaffold(
-                      body: ClientDetailScreen(
-                        client: _selectedClient!,
-                        isTabletOrDesktopLayout: true,
+              child:
+                  _selectedClient == null
+                      ? Center(child: Text(context.translate('no_data')))
+                      : Scaffold(
+                        body: ClientDetailScreen(
+                          client: _selectedClient!,
+                          isTabletOrDesktopLayout: true,
+                        ),
+                        key: ValueKey(_selectedClient!.id),
                       ),
-                      key: ValueKey(_selectedClient!.id),
-                    ),
             ),
           ],
         ),
@@ -355,25 +401,27 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
             SizedBox(width: 380, child: clientListContent),
             VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
             Expanded(
-              child: _selectedClient == null
-                  ? Center(child: Text(context.translate('no_data')))
-                  : Scaffold(
-                      body: ClientDetailScreen(
-                        client: _selectedClient!,
-                        isTabletOrDesktopLayout: true,
+              child:
+                  _selectedClient == null
+                      ? Center(child: Text(context.translate('no_data')))
+                      : Scaffold(
+                        body: ClientDetailScreen(
+                          client: _selectedClient!,
+                          isTabletOrDesktopLayout: true,
+                        ),
+                        key: ValueKey(_selectedClient!.id),
                       ),
-                      key: ValueKey(_selectedClient!.id),
-                    ),
             ),
           ],
         ),
       ),
-      floatingActionButton: ResponsiveLayout.isMobile(context)
-          ? null
-          : FloatingActionButton(
-              onPressed: () => _showAddEditClientDialog(),
-              child: const Icon(Icons.add),
-            ),
+      floatingActionButton:
+          ResponsiveLayout.isMobile(context)
+              ? null
+              : FloatingActionButton(
+                onPressed: () => _showAddEditClientDialog(),
+                child: const Icon(Icons.add),
+              ),
     );
   }
 }
