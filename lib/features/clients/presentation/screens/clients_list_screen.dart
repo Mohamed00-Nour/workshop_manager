@@ -86,6 +86,13 @@ class _ClientsListScreenState extends State<ClientsListScreen> {
       height: double.infinity,
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(isDark ? 80 : 10),
+            blurRadius: 16,
+            offset: const Offset(4, 0),
+          ),
+        ],
         border: Border(
           right: BorderSide(color: dividerColor),
         ),

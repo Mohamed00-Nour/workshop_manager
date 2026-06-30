@@ -37,10 +37,11 @@ class AppTheme {
         error: Color(0xFFEF4444),
         surfaceContainerHighest: Color(0xFFE2E8F0),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         color: lightSurface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
+        elevation: 3,
+        shadowColor: Colors.black.withAlpha(16),
+        shape: const RoundedRectangleBorder(
           side: BorderSide(color: lightBorder, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),
@@ -131,10 +132,11 @@ class AppTheme {
         error: Color(0xFFF87171),
         surfaceContainerHighest: Color(0xFF1B1B2A),
       ),
-      cardTheme: const CardTheme(
+      cardTheme: CardTheme(
         color: darkSurface,
-        elevation: 0,
-        shape: RoundedRectangleBorder(
+        elevation: 4,
+        shadowColor: Colors.black.withAlpha(120),
+        shape: const RoundedRectangleBorder(
           side: BorderSide(color: darkBorder, width: 1),
           borderRadius: BorderRadius.all(Radius.circular(16)),
         ),

@@ -376,9 +376,9 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                         controller: _tabController,
                         children: [
                           // Tab 1: Employees List
-                          _buildEmployeesTab(context, state, cardBg, dividerColor, subtleText, accent),
+                          _buildEmployeesTab(context, state, cardBg, dividerColor, subtleText, accent, isDark),
                           // Tab 2: Attendance Tracker
-                          _buildAttendanceTab(context, state, cardBg, dividerColor, subtleText, accent),
+                          _buildAttendanceTab(context, state, cardBg, dividerColor, subtleText, accent, isDark),
                           // Tab 3: Payroll Calculator
                           _buildPayrollTab(context, state, cardBg, dividerColor, subtleText, accent),
                         ],
@@ -403,6 +403,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
     Color dividerColor,
     Color subtleText,
     Color accent,
+    bool isDark,
   ) {
     if (state.employees.isEmpty) {
       return Scaffold(
@@ -431,60 +432,129 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         itemBuilder: (context, index) {
           final emp = state.employees[index];
-          return Card(
-            color: cardBg,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(color: dividerColor),
-            ),
-            margin: const EdgeInsets.only(bottom: 12),
-            child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              leading: CircleAvatar(
-                backgroundColor: accent.withAlpha(30),
-                foregroundColor: accent,
-                child: const Icon(Icons.person),
-              ),
-              title: Text(emp.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-              subtitle: Padding(
-                padding: const EdgeInsets.only(top: 4),
-                child: Text(
-                  '${context.translate('phone')}: ${emp.phone}\n${context.translate('weekly_salary')}: ${emp.baseWeeklySalary} ${context.translate('currency')}',
-                  style: TextStyle(color: subtleText, fontSize: 13),
+          return Container(
+            margin: const EdgeInsets.only(bottom: 14),
+            decoration: BoxDecoration(
+              color: cardBg,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(color: dividerColor),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(isDark ? 80 : 12),
+                  blurRadius: 12,
+                  offset: const Offset(0, 4),
                 ),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit_outlined, color: Colors.blue),
-                    onPressed: () => _showAddEditEmployeeDialog(employee: emp),
+                  // Colored icon container
+                  Container(
+                    width: 48,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      color: accent.withAlpha(isDark ? 35 : 20),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(Icons.person_outline, color: accent, size: 24),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline, color: Colors.red),
-                    onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AlertDialog(
-                          title: Text(context.translate('delete')),
-                          content: Text(context.translate('confirm_delete')),
-                          actions: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(context),
-                              child: Text(context.translate('cancel')),
-                            ),
-                            ElevatedButton(
-                              onPressed: () {
-                                _bloc.add(DeleteEmployeeEvent(emp.id));
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                              child: Text(context.translate('delete')),
-                            ),
+                  const SizedBox(width: 14),
+                  // Name & details
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          emp.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
+                            color: isDark ? Colors.white : const Color(0xFF131321),
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            Icon(Icons.phone_outlined, size: 12, color: subtleText),
+                            const SizedBox(width: 4),
+                            Text(emp.phone, style: TextStyle(fontSize: 12, color: subtleText)),
+                            const SizedBox(width: 12),
+                            Icon(Icons.access_time_outlined, size: 12, color: subtleText),
+                            const SizedBox(width: 4),
+                            Text('${emp.standardHoursPerDay}h/day', style: TextStyle(fontSize: 12, color: subtleText)),
                           ],
                         ),
-                      );
-                    },
+                        const SizedBox(height: 6),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: accent.withAlpha(isDark ? 30 : 15),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Text(
+                            '${emp.baseWeeklySalary} ${context.translate('currency')} / ${context.translate('weekly_salary')}',
+                            style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: accent),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Action buttons
+                  Column(
+                    children: [
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withAlpha(isDark ? 30 : 15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(Icons.edit_outlined, color: Colors.blue, size: 16),
+                          onPressed: () => _showAddEditEmployeeDialog(employee: emp),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: Colors.red.withAlpha(isDark ? 30 : 15),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: const Icon(Icons.delete_outline, color: Colors.red, size: 16),
+                          onPressed: () {
+                            showDialog(
+                              context: context,
+                              builder: (context) => AlertDialog(
+                                backgroundColor: isDark ? const Color(0xFF1D1D30) : Colors.white,
+                                title: Text(context.translate('delete')),
+                                content: Text(context.translate('confirm_delete')),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text(context.translate('cancel')),
+                                  ),
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      _bloc.add(DeleteEmployeeEvent(emp.id));
+                                      Navigator.pop(context);
+                                    },
+                                    style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+                                    child: Text(context.translate('delete')),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -507,6 +577,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
     Color dividerColor,
     Color subtleText,
     Color accent,
+    bool isDark,
   ) {
     final dateFormat = DateFormat('yyyy-MM-dd');
     
@@ -588,63 +659,92 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                     );
 
                     final statusColor = record.isAbsent ? Colors.red : Colors.green;
+                    final statusIcon = record.isAbsent ? Icons.cancel_outlined : Icons.check_circle_outline;
                     
-                    return Card(
-                      color: cardBg,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: dividerColor),
-                      ),
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                        title: Text(emp.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Padding(
-                          padding: const EdgeInsets.only(top: 6),
-                          child: Wrap(
-                            spacing: 8,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: statusColor.withAlpha(25),
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  record.isAbsent ? context.translate('absent') : context.translate('present'),
-                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: statusColor),
-                                ),
-                              ),
-                              if (!record.isAbsent) ...[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange.withAlpha(25),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    '${context.translate('late_minutes')}: ${record.lateMinutes}',
-                                    style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.orange),
-                                  ),
-                                ),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                                  decoration: BoxDecoration(
-                                    color: accent.withAlpha(25),
-                                    borderRadius: BorderRadius.circular(6),
-                                  ),
-                                  child: Text(
-                                    '${context.translate('overtime')}: ${record.overtimeMinutes}',
-                                    style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: accent),
-                                  ),
-                                ),
-                              ],
-                            ],
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      decoration: BoxDecoration(
+                        color: cardBg,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: dividerColor),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(isDark ? 80 : 12),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
                           ),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.edit_note_outlined, color: accent, size: 28),
-                          onPressed: () => _showAttendanceLoggerOverlay(emp, record),
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          children: [
+                            // Status icon container
+                            Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: statusColor.withAlpha(isDark ? 35 : 20),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(statusIcon, color: statusColor, size: 24),
+                            ),
+                            const SizedBox(width: 14),
+                            // Name & badges
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    emp.name,
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 15,
+                                      color: isDark ? Colors.white : const Color(0xFF131321),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Wrap(
+                                    spacing: 6,
+                                    runSpacing: 4,
+                                    children: [
+                                      _attendanceBadge(
+                                        record.isAbsent ? context.translate('absent') : context.translate('present'),
+                                        statusColor,
+                                        isDark,
+                                      ),
+                                      if (!record.isAbsent) ...[
+                                        _attendanceBadge(
+                                          '${context.translate('late_minutes')}: ${record.lateMinutes}',
+                                          Colors.orange,
+                                          isDark,
+                                        ),
+                                        _attendanceBadge(
+                                          '${context.translate('overtime')}: ${record.overtimeMinutes}',
+                                          accent,
+                                          isDark,
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                            // Edit button
+                            Container(
+                              width: 38,
+                              height: 38,
+                              decoration: BoxDecoration(
+                                color: accent.withAlpha(isDark ? 30 : 15),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: IconButton(
+                                padding: EdgeInsets.zero,
+                                icon: Icon(Icons.edit_note_outlined, color: accent, size: 20),
+                                onPressed: () => _showAttendanceLoggerOverlay(emp, record),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
@@ -842,6 +942,20 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
           Text(context.translate(key), style: TextStyle(color: textCol, fontSize: 13)),
           Text(val, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         ],
+      ),
+    );
+  }
+
+  Widget _attendanceBadge(String label, Color color, bool isDark) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withAlpha(isDark ? 35 : 20),
+        borderRadius: BorderRadius.circular(6),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color),
       ),
     );
   }
