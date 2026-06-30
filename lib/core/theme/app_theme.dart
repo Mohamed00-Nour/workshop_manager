@@ -32,9 +32,10 @@ class AppTheme {
       primaryColor: lightPrimary,
       colorScheme: const ColorScheme.light(
         primary: lightPrimary,
-        secondary: lightSecondary,
+        secondary: Color(0xFF0D9488), // Readable matching teal for light mode
         surface: lightSurface,
         error: Color(0xFFEF4444),
+        surfaceContainerHighest: Color(0xFFE2E8F0),
       ),
       cardTheme: const CardTheme(
         color: lightSurface,
@@ -45,7 +46,7 @@ class AppTheme {
         ),
       ),
       appBarTheme: const AppBarTheme(
-        backgroundColor: lightSurface,
+        backgroundColor: lightBg,
         foregroundColor: lightTextPrimary,
         elevation: 0,
         centerTitle: false,
@@ -67,7 +68,7 @@ class AppTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(color: lightSecondary, width: 2),
+          borderSide: const BorderSide(color: Color(0xFF0D9488), width: 2),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -76,7 +77,7 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: lightPrimary,
+          backgroundColor: const Color(0xFF0D9488), // Teal background for main actions
           foregroundColor: Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
@@ -88,7 +89,7 @@ class AppTheme {
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          foregroundColor: lightPrimary,
+          foregroundColor: lightTextPrimary,
           side: const BorderSide(color: lightBorder, width: 1),
           padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 24),
           shape: RoundedRectangleBorder(
@@ -96,6 +97,14 @@ class AppTheme {
           ),
           textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
         ),
+      ),
+      floatingActionButtonTheme: const FloatingActionButtonThemeData(
+        backgroundColor: Color(0xFF0D9488),
+        foregroundColor: Colors.white,
+      ),
+      dividerTheme: const DividerThemeData(
+        color: lightBorder,
+        thickness: 1,
       ),
       textTheme: const TextTheme(
         titleLarge: TextStyle(color: lightTextPrimary, fontWeight: FontWeight.bold, fontSize: 20),
