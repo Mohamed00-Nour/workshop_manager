@@ -46,4 +46,6 @@ app.*.map.json
 
 # Secrets
 lib/assets/*.json
+assets/*.json
+assets/lang/*.json
 backend/*.json

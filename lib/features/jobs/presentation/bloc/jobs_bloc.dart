@@ -39,11 +39,10 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       await _jobRepository.addJob(event.job, event.imageFile);
       add(LoadJobs(clientId: event.job.clientId, refreshFromServer: false));
 
-      // Trigger secure FCM V1 notification
-      await NotificationHelper().triggerNotification(
-        title: 'New Job Added',
-        body: 'Part: ${event.job.description} | Cost: ${event.job.cost} EGP | By: ${event.job.recordedByName}',
-        topic: 'workshop_updates',
+      // Notify all users about the new job
+      await NotificationHelper().notifyAllUsers(
+        title: 'مهمة جديدة',
+        body: 'القطعة: ${event.job.description} | التكلفة: ${event.job.cost} EGP | بواسطة: ${event.job.recordedByName}',
       );
     } catch (e) {
       emit(JobsError(e.toString()));
@@ -55,11 +54,10 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       await _jobRepository.updateJobStatus(event.jobId, event.clientId, event.status);
       add(LoadJobs(clientId: event.clientId, refreshFromServer: false));
 
-      // Trigger secure FCM V1 notification for status update
-      await NotificationHelper().triggerNotification(
-        title: 'Job Status Updated',
-        body: 'A job status was updated to: ${event.status.replaceAll('_', ' ')}',
-        topic: 'workshop_updates',
+      // Notify all users about job status update
+      await NotificationHelper().notifyAllUsers(
+        title: 'تحديث حالة المهمة',
+        body: 'تم تحديث حالة المهمة إلى: ${event.status.replaceAll('_', ' ')}',
       );
     } catch (e) {
       emit(JobsError(e.toString()));

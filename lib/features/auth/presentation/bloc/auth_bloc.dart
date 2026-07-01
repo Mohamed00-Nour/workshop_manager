@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/services/cache_service.dart';
+import '../../../../core/services/notification_helper.dart';
 import '../../data/repositories/auth_repository.dart';
 import 'auth_event.dart';
 import 'auth_state.dart';
@@ -19,6 +20,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     try {
       final user = await _authRepository.getCurrentUser();
       if (user != null) {
+        await NotificationHelper().saveUserToken(user.uid);
         emit(Authenticated(user));
       } else {
         final cache = CacheService();
@@ -28,6 +30,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
           try {
             final loggedInUser = await _authRepository.login(email, password);
             if (loggedInUser != null) {
+              await NotificationHelper().saveUserToken(loggedInUser.uid);
               emit(Authenticated(loggedInUser));
               return;
             }
@@ -57,6 +60,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         final cache = CacheService();
         await cache.saveCredentials(event.email, event.password);
+        await NotificationHelper().saveUserToken(user.uid);
         emit(Authenticated(user));
       } else {
         emit(const AuthError('Login failed: User record not found.'));
@@ -73,6 +77,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       if (user != null) {
         final cache = CacheService();
         await cache.saveCredentials(event.email, event.password);
+        await NotificationHelper().saveUserToken(user.uid);
         emit(Authenticated(user));
       } else {
         emit(const AuthError('Registration failed: User record could not be created.'));

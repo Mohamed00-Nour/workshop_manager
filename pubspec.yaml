@@ -52,6 +52,8 @@ dependencies:
   equatable: ^2.0.8
   flutter_localizations:
     sdk: flutter
+  googleapis_auth: ^2.0.0
+  flutter_local_notifications: ^18.0.1
 
 dev_dependencies:
   flutter_test:
@@ -63,6 +65,7 @@ flutter:
 
   assets:
     - assets/lang/
+    - assets/workshop-manager-5f2f7-1c915a4d22cd.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

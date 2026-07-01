@@ -38,11 +38,10 @@ class PaymentsBloc extends Bloc<PaymentsEvent, PaymentsState> {
       await _paymentRepository.addPayment(event.payment);
       add(LoadPayments(clientId: event.payment.clientId, refreshFromServer: false));
 
-      // Trigger secure FCM V1 notification
-      await NotificationHelper().triggerNotification(
-        title: 'Payment Received',
-        body: 'Amount: ${event.payment.amount} EGP | Method: ${event.payment.paymentMethod.toUpperCase()}',
-        topic: 'workshop_updates',
+      // Notify all users about the payment
+      await NotificationHelper().notifyAllUsers(
+        title: 'تم استلام دفعة مالية',
+        body: 'المبلغ: ${event.payment.amount} EGP | الطريقة: ${event.payment.paymentMethod.toUpperCase()}',
       );
     } catch (e) {
       emit(PaymentsError(e.toString()));
