@@ -380,7 +380,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                           // Tab 2: Attendance Tracker
                           _buildAttendanceTab(context, state, cardBg, dividerColor, subtleText, accent, isDark),
                           // Tab 3: Payroll Calculator
-                          _buildPayrollTab(context, state, cardBg, dividerColor, subtleText, accent),
+                          _buildPayrollTab(context, state, cardBg, dividerColor, subtleText, accent, isDark),
                         ],
                       ),
                     ),
@@ -763,6 +763,7 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
     Color dividerColor,
     Color subtleText,
     Color accent,
+    bool isDark,
   ) {
     final dateFormat = DateFormat('yyyy-MM-dd');
     
@@ -884,13 +885,20 @@ class _EmployeesDashboardScreenState extends State<EmployeesDashboardScreen>
                     final double lateDeduction = deductibleLateHours * state.config.lateDeductionHourlyRate;
                     final double netSalary = emp.baseWeeklySalary + overtimePay - lateDeduction;
 
-                    return Card(
-                      color: cardBg,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        side: BorderSide(color: dividerColor),
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 14),
+                      decoration: BoxDecoration(
+                        color: cardBg,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: dividerColor),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(isDark ? 80 : 12),
+                            blurRadius: 12,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
                       ),
-                      margin: const EdgeInsets.only(bottom: 12),
                       child: Padding(
                         padding: const EdgeInsets.all(16),
                         child: Column(
